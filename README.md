@@ -53,7 +53,7 @@ Upgrade pip and setuptools
 
 Clone gbif2mysql from github: 
 
-    git clone https://github.com/ZFMK/gbif2tnt.git
+    git clone https://github.com/ZFMK/gbif2mysql.git
 
 
 Install the gbif2mysql script:
