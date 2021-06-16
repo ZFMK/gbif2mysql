@@ -63,7 +63,6 @@ Install the gbif2mysql script:
 
 Create and edit the config file
 
-    cd ../gbif2mysql
     cp config.template.ini config.ini
 
 Insert the needed database connection values:
@@ -79,7 +78,6 @@ Insert the needed database connection values:
 
 ### Running gbif2mysql
 
-    cd ../gbif2mysql
     python import_gbif.py <directory containing tsv files from GBIF backbone taxonomy>
 
 
