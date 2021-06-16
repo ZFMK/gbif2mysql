@@ -3,8 +3,8 @@ Import GBIF Backbone Taxonomy into a flat MySQL Database, do some quality checks
 
 The import will be done in 2 steps:
 
-  - [Download](Download of current GBIF Backbone Taxonomy) the current GBIF Backbone Taxonomy as csv file
-  - [Import](Import from the csv-Files into a MySQL database) from the csv-Files into a MySQL database with flat tables by [gbif2mysql](#gbif2mysql installation) script
+  - [Download](#Download_of_current_GBIF_Backbone_Taxonomy) the current GBIF Backbone Taxonomy as csv file
+  - [Import](#Import from the csv-Files into a MySQL database) from the csv-Files into a MySQL database with flat tables by [gbif2mysql](#gbif2mysql installation) script
 
 
 
