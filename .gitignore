@@ -1,0 +1,11 @@
+**/__pycache__
+pip-selfcheck.json
+*~
+~*
+.~*
+**/config.ini
+*.log
+*.egg-info/
+
+.idea/*
+
