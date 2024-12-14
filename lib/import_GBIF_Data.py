@@ -100,8 +100,9 @@ class GBIF_Importer():
 		
 
 
-	def insert_taxon_data(self, taxondata):
-		placeholders = ['(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' for _ in taxondata]
+	def insert_taxon_data(self, taxondata, counter):
+		placeholderstring = '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		placeholders = [placeholderstring for _ in taxondata]
 		
 		values = []
 		for valuelist in taxondata:
@@ -134,19 +135,25 @@ class GBIF_Importer():
 		`genus`
 		)
 		VALUES {0}
-		;""".format(', '.join(placeholders))
+		;"""
 		
 		try:
-			self.cur.execute(query, values)
+			self.cur.execute(query.format(', '.join(placeholders)), values)
 			self.con.commit()
 		except pymysql.err.DataError:
 			newlists = self.fix_long_authorship(taxondata)
 			values = []
 			for valuelist in newlists:
 				values.extend(valuelist)
-			
-			self.cur.execute(query, values)
-			self.con.commit()
+			try:
+				self.cur.execute(query.format(', '.join(placeholders)), values)
+				self.con.commit()
+			except:
+				line_count = counter
+				for valuesrow in taxondata:
+					line_count = line_count + 1
+					self.debug_by_row(query, valuesrow, placeholderstring, line_count)
+		return
 	
 	
 	def get_max_row(self, table):
@@ -291,7 +298,7 @@ class GBIF_Importer():
 			taxondatalists = self.filter_empty_canonicalnames(taxondatalists)
 			insert_counter += len(taxondatalists)
 			if len(taxondatalists) > 0:
-				self.insert_taxon_data(taxondatalists)
+				self.insert_taxon_data(taxondatalists, counter)
 			logger.info('got {0} taxa, inserted {1} taxa'.format(counter, insert_counter))
 			#print('got {0} taxa, inserted {1} taxa'.format(counter, insert_counter))
 		
@@ -309,14 +316,15 @@ class GBIF_Importer():
 			datalists = self.separate_values(tsvlines)
 			insert_counter += len(datalists)
 			if len(datalists) > 0:
-				self.insert_CommonNames(datalists)
+				self.insert_CommonNames(datalists, counter)
 			logger.info('got {0} common names, inserted {1} common names'.format(counter, insert_counter))
 		
 		return
 
 
-	def insert_CommonNames(self, datalists):
-		placeholders = ['(%s, %s, %s, %s, %s, %s, %s, %s)' for _ in datalists]
+	def insert_CommonNames(self, datalists, counter):
+		placeholderstring = '(%s, %s, %s, %s, %s, %s, %s, %s)'
+		placeholders = [placeholderstring for _ in datalists]
 		
 		values = []
 		for valuelist in datalists:
@@ -334,13 +342,32 @@ class GBIF_Importer():
 		`source`
 		)
 		VALUES {0}
-		;""".format(', '.join(placeholders))
+		;"""
 		
-		self.cur.execute(query, values)
-		self.con.commit()
+		try:
+			self.cur.execute(query.format(', '.join(placeholders)), values)
+			self.con.commit()
+		except:
+			line_count = counter
+			for valuesrow in datalists:
+				line_count = line_count + 1
+				self.debug_by_row(query, valuesrow, placeholderstring, line_count)
+			#logger.info(values)
+			#print(values)
 		return
 	
 
+	def debug_by_row(self, query, valuesrow, placeholderstring, line_count):
+		try:
+			self.cur.execute(query.format(placeholderstring), valuesrow)
+			self.con.commit()
+		except:
+			logger.info('Error with values in line {0}:'.format(line_count))
+			logger.info(valuesrow)
+			pass
+		
+		
+		
 
 
 if __name__ == "__main__":

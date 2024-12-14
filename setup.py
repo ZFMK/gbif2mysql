@@ -7,7 +7,8 @@ requires = [
     'pymysql',
     'pyodbc',
     'pudb',
-    'configparser'
+    'configparser',
+    'cryptography'
     ]
 
 setup(name='GBIF_importer',
